@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  chunify-python:
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+    command: "tail -f /dev/null"
+    volumes:
+      - ./code:/code
+      - C:\Users\rafae\.aws:/root/.aws      
+    ports:
+      - "8000:8000"
+    restart: always
+    networks:
+      - chunify-network  
+
+  chunify-nginx:
+    build: 
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - chunify-python  
+    networks:
+      - chunify-network
+
+networks: 
+  chunify-network:
+    driver: bridge   
