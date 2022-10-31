@@ -44,6 +44,10 @@ def update():
 def delete(id):
   return UsersDB().delete(id)
 
+@app.route('/users/{id}/playlists', methods=['GET'])
+def show_from_user(id):
+  return PlaylistDB().show_from_user(id)  
+
 @app.route('/playlists', methods=['GET'])
 def show_all():
   return PlaylistDB().show_all()
@@ -65,6 +69,10 @@ def update():
 @app.route('/playlists/{id}', methods=['DELETE'])
 def delete(id):
   return PlaylistDB().delete(id)
+
+@app.route('/playlists/{id}/musics', methods=['GET'])
+def show_from_playlist(id):
+  return MusicDB().show_from_playlist(id)    
 
 @app.route('/musics', methods=['GET'])
 def show_all():

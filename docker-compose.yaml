@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/python/Dockerfile
-    command: "tail -f /dev/null"
+    entrypoint: /usr/bin/entrypoint.sh
     volumes:
       - ./code:/code
       - C:\Users\rafae\.aws:/root/.aws      

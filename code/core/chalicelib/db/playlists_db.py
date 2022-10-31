@@ -27,7 +27,7 @@ class PlaylistsDB:
     )
     return response["Items"]
 
-  # Insert playlist
+  # Inserts playlist
   def insert(self, playlist):
     uid = str(uuid4())
     playlist["id"] = uid
@@ -45,7 +45,7 @@ class PlaylistsDB:
     else:
       return {}
 
-  # Update playlist
+  # Updates playlist
   def update(self, playlist_data):
     playlist = self.show(playlist_data["id"])
     
@@ -67,7 +67,7 @@ class PlaylistsDB:
     else: 
       return {}      
 
-  # Delete playlist
+  # Deletes playlist
   def delete(self, id):
     response = self.playlists_table.delete_item(
       Key={

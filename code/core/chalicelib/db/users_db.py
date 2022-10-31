@@ -19,7 +19,7 @@ class UsersDB:
     )
     return response["Item"]
 
-  # Insert user
+  # Inserts user
   def insert(self, user):
     uid = str(uuid4())    
     user["id"] = uid
@@ -38,7 +38,7 @@ class UsersDB:
     else:
       return {}
 
-  # Update user
+  # Updates user
   def update(self, user_data):
     user = self.show(user_data["id"])
     
@@ -63,7 +63,7 @@ class UsersDB:
     else: 
       return {}      
 
-  # Delete user
+  # Deletes user
   def delete(self, id):
     response = self.users_table.delete_item(
       Key={

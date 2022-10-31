@@ -10,9 +10,12 @@ RUN apt-get update \
 COPY ./docker/requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
+COPY ./docker/python/entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+
 WORKDIR /code
 COPY ./code /code
 
 EXPOSE 8000
 
-# ENTRYPOINT [ "chalice", "local", "--host=0.0.0.0", "--port=8000" ]
+# ENTRYPOINT [ "/code/core/chalice", "local", "--host=0.0.0.0", "--port=8000" ]

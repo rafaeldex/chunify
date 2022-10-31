@@ -27,7 +27,7 @@ class MusicsDB:
     )
     return response["Items"]     
 
-  # Insert music
+  # Inserts music
   def insert(self, music):
     uid = str(uuid4())
     music["id"] = uid
@@ -48,7 +48,7 @@ class MusicsDB:
     else:
       return {}
 
-  # Update music
+  # Updates music
   def update(self, music_data):
     music = self.show(music_data["id"])
     
@@ -79,7 +79,7 @@ class MusicsDB:
     else: 
       return {}      
 
-  # Delete music
+  # Deletes music
   def delete(self, id):
     response = self.musics_table.delete_item(
       Key={
