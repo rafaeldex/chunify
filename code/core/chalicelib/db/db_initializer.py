@@ -50,4 +50,9 @@ class DBInitializer:
         BillingMode='PAY_PER_REQUEST',
       )
       print(chunify_musics)
-    return "Musics table created successifuly"  
+    return "Musics table created successifuly"
+
+  def initialize(self):
+    self.create_user_table()
+    self.create_playlist_table()
+    self.create_playlist_table()

@@ -8,7 +8,7 @@ services:
     entrypoint: /usr/bin/entrypoint.sh
     volumes:
       - ./code:/code
-      - C:\Users\rafae\.aws:/root/.aws      
+      - ${AWS_DIR}:/root/.aws      
     ports:
       - "8000:8000"
     restart: always

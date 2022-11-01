@@ -1,22 +1,39 @@
 from chalice import Chalice
-from chalicelib.db.db_initializer import DBInitializer
-from chalicelib.db.users_db import UsersDB
-from chalicelib.services.sns import Sns
+from chalicelib.db import db_initializer, users_db, playlists_db, musics_db
+from chalicelib.memory import data_initializer, users_data, playlists_data, musics_data
+from chalicelib.services import sns
 
 app = Chalice(app_name='chunify')
-version = 'COMPLETE'
+# COMPLETE, BETA
+version = 'BETA'
 topic_name = 'CHUNIFY_TOPIC'
 
 if version == 'COMPLETE':
   # Creates database tables
-  DBInitializer().create_user_table()
-  DBInitializer().create_playlist_table()
-  DBInitializer().create_playlist_table()
-  # Creates sns topics
-  if Sns().show_chunify_topic() == "Not found":
-    Sns().create_topic(topic_name)
+  db_initializer.DBInitializer().initialize()
+  # Creates sns topic
+  if sns.Sns().show_chunify_topic() == "Not found":
+    sns.Sns().create_topic(topic_name)
 else:
-    pass
+  # Creates memory data
+  data_initializer.DataInitializer().initialize()
+
+def get_database(table_name):
+  global version
+  if version == 'COMPLETE':
+    if table_name == 'users':
+      return users_db.UsersDB()
+    elif table_name == 'playlists':
+      return playlists_db.PlaylistsDB()
+    elif table_name == 'musics':
+      return musics_db.MusicsDB()
+  else:
+    if table_name == 'users':
+      return users_data.UsersData()
+    elif table_name == 'playlists':
+      return playlists_data.PlaylistsData()
+    elif table_name == 'musics':
+      return musics_data.MusicsData()
 
 @app.route('/')
 def index():
@@ -24,74 +41,74 @@ def index():
 
 @app.route('/users', methods=['GET'])
 def show_all():
-  return UsersDB().show_all()
+  return get_database('users').show_all()
 
 @app.route('/users/{id}', methods=['GET'])
 def show(id): 
-  return UsersDB().show(id)
+  return get_database('users').show(id)
 
 @app.route('/users', methods=['POST'])
 def insert():
   user_as_json = app.current_request.json_body
-  return UsersDB().insert(user_as_json)
+  return get_database('users').insert(user_as_json)
 
 @app.route('/users', methods=['PUT'])
 def update():
   user_as_json = app.current_request.json_body
-  return UsersDB().update(user_as_json)
+  return get_database('users').update(user_as_json)
 
 @app.route('/users/{id}', methods=['DELETE'])
 def delete(id):
-  return UsersDB().delete(id)
+  return get_database('users').delete(id)
 
 @app.route('/users/{id}/playlists', methods=['GET'])
 def show_from_user(id):
-  return PlaylistDB().show_from_user(id)  
+  return get_database('playlists').show_from_user(id)  
 
 @app.route('/playlists', methods=['GET'])
 def show_all():
-  return PlaylistDB().show_all()
+  return get_database('playlists').show_all()
 
 @app.route('/playlists/{id}', methods=['GET'])
 def show(id):
-  return PlaylistDB().show(id)
+  return get_database('playlists').show(id)
 
 @app.route('/playlists', methods=['POST'])
 def insert():
   playlist_as_json = app.current_request.json_body
-  return PlaylistDB().insert(playlist_as_json)
+  return get_database('playlists').insert(playlist_as_json)
 
 @app.route('/playlists', methods=['PUT'])
 def update():
   playlist_as_json = app.current_request.json_body
-  return PlaylistDB().update(playlist_as_json)
+  return get_database('playlists').update(playlist_as_json)
 
 @app.route('/playlists/{id}', methods=['DELETE'])
 def delete(id):
-  return PlaylistDB().delete(id)
+  return get_database('playlists').delete(id)
 
 @app.route('/playlists/{id}/musics', methods=['GET'])
 def show_from_playlist(id):
-  return MusicDB().show_from_playlist(id)    
+  return get_database('musics').show_from_playlist(id)    
 
 @app.route('/musics', methods=['GET'])
 def show_all():
-  return MusicDB().show_all()
+  return get_database('musics').show_all()
 
 @app.route('/musics/{id}', methods=['GET'])
 def show(id):
-  return MusicDB().show(id)
+  return get_database('musics').show(id)
 
 @app.route('/musics', methods=['POST'])
 def insert():
   music_as_json = app.current_request.json_body
-  return MusicDB().insert(music_as_json)
+  return get_database('musics').insert(music_as_json)
 
 @app.route('/musics', methods=['PUT'])
 def update():
   music_as_json = app.current_request.json_body
-  return MusicDB().update(music_as_json)
+  return get_database('musics').update(music_as_json)
 
 @app.route('/musics/{id}', methods=['DELETE'])
 def delete(id):
-  return MusicDB().delete(id)
+  return get_database('musics').delete(id)

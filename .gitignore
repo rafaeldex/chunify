@@ -1,0 +1,3 @@
+code/core/.chalice/deployments/
+code/core/.chalice/venv/
+.env
