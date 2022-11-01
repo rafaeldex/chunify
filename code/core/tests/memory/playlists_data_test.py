@@ -9,7 +9,7 @@ class TestPlaylistsData(unittest.TestCase):
     DataInitializer().initialize()
 
   def test_can_insert_and_retrieve_playlist(self):
-    user = json.loads('{ "name": "Tester", "age": 33, "phone": "5585981661026" }')
+    user = json.loads('{ "name": "Tester", "age": 40, "phone": "5586999945388" }')
     inserted_user = UsersData().insert(user)
     playlist = json.loads('{ "name": "Lets Rock" }')
     playlist['user_id'] = inserted_user['id']
@@ -19,7 +19,7 @@ class TestPlaylistsData(unittest.TestCase):
 
   def test_can_insert_and_list_all_playlists(self):
     found = False
-    user = json.loads('{ "name": "Tester", "age": 33, "phone": "5585981661026" }')
+    user = json.loads('{ "name": "Tester", "age": 40, "phone": "5586999945388" }')
     inserted_user = UsersData().insert(user)
     playlist = json.loads('{ "name": "Lets Rock" }')
     playlist['user_id'] = inserted_user['id']
@@ -31,7 +31,7 @@ class TestPlaylistsData(unittest.TestCase):
 
   def test_can_insert_and_list_all_playlists_from_user(self):
     found = False
-    user = json.loads('{ "name": "Tester", "age": 33, "phone": "5585981661026" }')
+    user = json.loads('{ "name": "Tester", "age": 40, "phone": "5586999945388" }')
     inserted_user = UsersData().insert(user)
     playlist = json.loads('{ "name": "Lets Rock" }')
     playlist['user_id'] = inserted_user['id']
@@ -42,7 +42,7 @@ class TestPlaylistsData(unittest.TestCase):
     self.assertEqual(found, True)    
 
   def test_can_insert_and_update_playlist(self):
-    user = json.loads('{ "name": "Tester", "age": 33, "phone": "5585981661026" }')
+    user = json.loads('{ "name": "Tester", "age": 40, "phone": "5586999945388" }')
     inserted_user = UsersData().insert(user)
     playlist = json.loads('{ "name": "Lets Rock" }')
     playlist['user_id'] = inserted_user['id']
@@ -53,7 +53,7 @@ class TestPlaylistsData(unittest.TestCase):
     self.assertEqual(updated_playlist, playlist)
 
   def test_can_insert_and_delete_playlist(self):
-    user = json.loads('{ "name": "Tester", "age": 33, "phone": "5585981661026" }')
+    user = json.loads('{ "name": "Tester", "age": 40, "phone": "5586999945388" }')
     inserted_user = UsersData().insert(user)
     playlist = json.loads('{ "name": "Lets Rock" }')
     playlist['user_id'] = inserted_user['id']

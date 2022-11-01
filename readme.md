@@ -14,7 +14,7 @@
 git clone https://github.com/rafaeldex/chunify.git path/to/folder
 ```
 
-*2 - Set your aws credentials in .env*
+*2 - Set your aws credentials path in .env*
 ```html
 AWS_DIR=/path/to/your/.aws
 ```
@@ -32,6 +32,9 @@ docker-compose up
 ```
 
 *5 - Access localhost in your browser*
+```html
+http://localhost
+```
 
 ### Deployment
 
@@ -63,12 +66,13 @@ chalice deploy
 
 -  Account with SNS unblocked before
 -  DynamoDB Access Permissions for chunify-dev function
+-  CloudWatch enabled for SNS
 
 ### AWS services used
 
 -  Lambda
 -  DynamoDB
--  Cloud Watch
+-  CloudWatch
 -  SNS
 -  IAM
 -  Api Gateway

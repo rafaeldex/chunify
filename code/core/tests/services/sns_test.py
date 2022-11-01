@@ -38,12 +38,3 @@ class SqsTest:
     response = Sns().send_message_topic(phone, message)
     print(response)
     return response    
-
-# new_topic = SqsTest.create_topic("CHUNIFY_TOPIC")
-# arn:aws:sns:us-east-1:112935367069:CHUNIFY_TOPIC
-# all_topics = SqsTest.list_topics()
-# chunify_topic = SqsTest.show_chunify_topic()
-# subscribed = SqsTest.subscribe("arn:aws:sns:us-east-1:112935367069:CHUNIFY_TOPIC", "sms", "+5586999945388")
-# arn:aws:sns:us-east-1:112935367069:CHUNIFY_TOPIC:c9439885-d078-43d2-930f-7dbe8d5d69ab'
-# message_sent = SqsTest.send_message_user("+5586999945388", "Bem vindo ao Chunify")
-# message_sent = SqsTest.send_message_topic("arn:aws:sns:us-east-1:112935367069:CHUNIFY_TOPIC", "Bem vindo ao Chunify")
