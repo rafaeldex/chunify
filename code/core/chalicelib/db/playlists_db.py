@@ -15,54 +15,56 @@ class PlaylistsDB:
   def show(self, id):
     response = self.playlists_table.get_item(
       Key={
-        "id": id
+        'id': id
       }
     )
-    return response["Item"]
+    return response
 
   # Lists all playlists that belongs to an user
   def show_from_user(self, user_id):
     response = self.playlists_table.scan(
       FilterExpression=Attr('user_id').eq(user_id)
     )
-    return response["Items"]
+    return response
 
   # Inserts playlist
   def insert(self, playlist):
     uid = str(uuid4())
-    playlist["id"] = uid
+    playlist['id'] = uid
 
     response = self.playlists_table.put_item(
       Item=playlist
     )
 
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return {
-        'id': uid,
-        'name' : playlist["name"],
-        'user_id': playlist["user_id"]
+        'id': playlist['id'],
+        'name' : playlist['name'],
+        'user_id': playlist['user_id']
       }
     else:
       return {}
 
   # Updates playlist
   def update(self, playlist_data):
-    playlist = self.show(playlist_data["id"])
+    playlist = self.show(playlist_data['id'])
     
-    if "name" in playlist_data:
-      playlist["name"] = playlist_data["name"]
-    if "user_id" in playlist_data:
-      playlist["user_id"] = playlist_data["user_id"]
+    if 'id' in playlist_data:
+      playlist['id'] = playlist_data['id']
+    if 'name' in playlist_data:
+      playlist['name'] = playlist_data['name']
+    if 'user_id' in playlist_data:
+      playlist['user_id'] = playlist_data['user_id']
     
     response = self.playlists_table.put_item(
       Item=playlist
     )
     
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return {
-        'id': playlist["id"],
-        'name' : playlist["name"],
-        'user_id': playlist["user_id"]
+        'id': playlist['id'],
+        'name' : playlist['name'],
+        'user_id': playlist['user_id']
       }
     else: 
       return {}      
@@ -75,7 +77,7 @@ class PlaylistsDB:
       }
     )
 
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return id
     else: 
       return None

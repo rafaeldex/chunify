@@ -15,66 +15,68 @@ class MusicsDB:
   def show(self, id):
     response = self.musics_table.get_item(
       Key={
-        "id": id
+        'id': id
       }
     )
-    return response["Item"]
+    return response
 
   # Lists all playlists that belongs to a playlist
   def show_from_playlist(self, playlist_id):
     response = self.musics_table.scan(
       FilterExpression=Attr('playlist_id').eq(playlist_id)
     )
-    return response["Items"]     
+    return response   
 
   # Inserts music
   def insert(self, music):
     uid = str(uuid4())
-    music["id"] = uid
+    music['id'] = uid
 
     response = self.musics_table.put_item(
       Item=music
     )
 
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return {
-        'id': uid,
-        'name' : music["name"],
-        'artist': music["artist"],
-        'album': music["album"],
-        'year': music["year"],
-        'playlist_id': music["playlist_id"]
+        'id': music['id'],
+        'name' : music['name'],
+        'artist': music['artist'],
+        'album': music['album'],
+        'year': music['year'],
+        'playlist_id': music['playlist_id']
       }
     else:
       return {}
 
   # Updates music
   def update(self, music_data):
-    music = self.show(music_data["id"])
+    music = self.show(music_data['id'])
     
-    if "name" in music_data:
-      music["name"] = music_data["name"]
-    if "artist" in music_data:
-      music["artist"] = music_data["artist"]
-    if "album" in music_data:
-      music["album"] = music_data["album"]
-    if "year" in music_data:
-      music["year"] = music_data["year"]   
-    if "playlist_id" in music_data:
-      music["playlist_id"] = music_data["playlist_id"]  
+    if 'id' in music_data:
+      music['id'] = music_data['id']
+    if 'name' in music_data:
+      music['name'] = music_data['name']
+    if 'artist' in music_data:
+      music['artist'] = music_data['artist']
+    if 'album' in music_data:
+      music['album'] = music_data['album']
+    if 'year' in music_data:
+      music['year'] = music_data['year']   
+    if 'playlist_id' in music_data:
+      music['playlist_id'] = music_data['playlist_id']  
     
     response = self.musics_table.put_item(
       Item=music
     )
     
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return {
-        'id': music["id"],
-        'name' : music["name"],
-        'artist': music["artist"],
-        'album': music["album"],
-        'year': music["year"],
-        'playlist_id': music["playlist_id"]
+        'id': music['id'],
+        'name' : music['name'],
+        'artist': music['artist'],
+        'album': music['album'],
+        'year': music['year'],
+        'playlist_id': music['playlist_id']
       }
     else: 
       return {}      
@@ -87,7 +89,7 @@ class MusicsDB:
       }
     )
 
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return id
     else: 
       return None

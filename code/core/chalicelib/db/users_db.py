@@ -14,51 +14,53 @@ class UsersDB:
   def show(self, id):
     response = self.users_table.get_item(
       Key={
-        "id": id
+        'id': id
       }
     )
-    return response["Item"]
+    return response
 
   # Inserts user
   def insert(self, user):
     uid = str(uuid4())    
-    user["id"] = uid
+    user['id'] = uid
 
     response = self.users_table.put_item(
       Item=user
     )
 
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return {
-        'id': uid,
-        'name' : user["name"],
-        'age': user["age"],
-        'phone': user["phone"]
+        'id': user['id'],
+        'name' : user['name'],
+        'age': user['age'],
+        'phone': user['phone']
       }
     else:
       return {}
 
   # Updates user
   def update(self, user_data):
-    user = self.show(user_data["id"])
+    user = self.show(user_data['id'])
     
-    if "name" in user_data:
-      user["name"] = user_data["name"]
-    if "age" in user_data:
-      user["age"] = user_data["age"]
-    if "phone" in user_data:
-      user["phone"] = user_data["phone"]
+    if 'id' in user_data:
+      user['id'] = user_data['id']
+    if 'name' in user_data:
+      user['name'] = user_data['name']
+    if 'age' in user_data:
+      user['age'] = user_data['age']
+    if 'phone' in user_data:
+      user['phone'] = user_data['phone']
     
     response = self.users_table.put_item(
       Item=user
     )
     
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return {
-        'id': user["id"],
-        'name' : user["name"],
-        'age': user["age"],
-        'phone': user["phone"]
+        'id': user['id'],
+        'name' : user['name'],
+        'age': user['age'],
+        'phone': user['phone']
       }
     else: 
       return {}      
@@ -71,7 +73,7 @@ class UsersDB:
       }
     )
 
-    if int(response["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
       return id
     else: 
       return None

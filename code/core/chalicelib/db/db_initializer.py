@@ -18,7 +18,7 @@ class DBInitializer:
         BillingMode='PAY_PER_REQUEST',
       )
       print(chunify_users)
-    return "Users table created successifuly"
+    return 'Users table created successifuly'
 
   # Creates the playlists table
   def create_playlist_table(self):
@@ -34,7 +34,7 @@ class DBInitializer:
         BillingMode='PAY_PER_REQUEST',
       )
       print(chunify_playlists)
-    return "Playlists table created successifuly"  
+    return 'Playlists table created successifuly'  
 
   # Creates the musics table
   def create_playlist_table(self):
@@ -50,7 +50,7 @@ class DBInitializer:
         BillingMode='PAY_PER_REQUEST',
       )
       print(chunify_musics)
-    return "Musics table created successifuly"
+    return 'Musics table created successifuly'
 
   def initialize(self):
     self.create_user_table()

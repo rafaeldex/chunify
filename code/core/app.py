@@ -4,8 +4,9 @@ from chalicelib.memory import data_initializer, users_data, playlists_data, musi
 from chalicelib.services import sns
 
 app = Chalice(app_name='chunify')
-# COMPLETE, BETA
-version = 'BETA'
+# COMPLETE: Uses DynamoDB on demand
+# BETA: Uses in process storage (local tests)
+version = 'COMPLETE'
 topic_name = 'CHUNIFY_TOPIC'
 
 if version == 'COMPLETE':

@@ -3,7 +3,9 @@
 A simple application to create rest api in lambda functions based on chalice framework.
 This rest api simulates an app like spotify where we can manage users, playlists and musics.
 Chunify sends a sms to all users with phone number registered When a new music is added.
-The data can be stores in DymanoDB or within the process.
+The data can be stores in DynamoDB or within the process.
+When the data is stored into DynamoDB the tables are created on demand in the initialization
+and the topic in SNS where all users phones will be subscribed is created too.
 
 ### How to use
 
@@ -17,11 +19,14 @@ git clone https://github.com/rafaeldex/chunify.git path/to/folder
 AWS_DIR=/path/to/your/.aws
 ```
 
-*2 - Choose the type of data storage in /code/core/app.py*
+*3 - Choose the type of data storage in /code/core/app.py*
 ```python
-# COMPLETE, BETA
+# COMPLETE: Uses DynamoDB on demand
+# BETA: Uses in process storage (local tests)
 version = 'COMPLETE'
 ```
+
+BETA: Uses in process storage
 
 *4 - Run docker-compose*
 ```bash
@@ -69,3 +74,7 @@ chalice deploy
 -  SNS
 -  IAM
 -  Api Gateway
+
+### License
+
+-  Feel free to clone, use and work with this code
