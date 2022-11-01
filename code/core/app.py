@@ -6,7 +6,7 @@ from chalicelib.services import sns
 app = Chalice(app_name='chunify')
 # COMPLETE: Uses DynamoDB on demand
 # BETA: Uses in process storage (local tests)
-version = 'COMPLETE'
+version = 'BETA'
 topic_name = 'CHUNIFY_TOPIC'
 
 if version == 'COMPLETE':

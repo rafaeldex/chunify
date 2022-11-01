@@ -15,7 +15,7 @@ class PlaylistsData:
     for playlist in playlists:
       if playlist['id'] == id:
         response = {
-          'id': user['id'],
+          'id': playlist['id'],
           'name' : playlist['name'],
           'user_id': playlist['user_id']
         }
@@ -30,7 +30,7 @@ class PlaylistsData:
     for playlist in playlists:
       if playlist['user_id'] == user_id:
         response.append({
-          'id': user['id'],
+          'id': playlist['id'],
           'name' : playlist['name'],
           'user_id': playlist['user_id']
         })
@@ -79,7 +79,7 @@ class PlaylistsData:
     response = { 'id' : ''}
     playlist = self.show(id)
 
-    if not user == {}:
+    if not playlist == {}:
       DataInitializer.data[1].remove(playlist)
       response = { 'id': id }
 
