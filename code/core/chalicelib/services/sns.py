@@ -15,15 +15,17 @@ class Sns:
     return response
 
   # List chunify topic
-  def show_chunify_topic(self):
+  def show_chunify_topic(self, topic_name):
     response = self.sns.topics.all()
     for topic in response:
-      if "CHUNIFY_TOPIC" in topic.arn:
+      if topic_name in topic.arn:
         return topic.arn
     return "Not found"
 
   # Subscribe an endpoint
+  # Arn: chunify-arn
   # Protocol: (email,sms)
+  # Endpoint: some email or phone number
   def subscribe(self, arn, protocol, endpoint):
     response = self.sns_client.subscribe(
       TopicArn=arn,
@@ -47,4 +49,4 @@ class Sns:
         TopicArn=topic,
         Message=message,
     )
-    return response  
+    return response

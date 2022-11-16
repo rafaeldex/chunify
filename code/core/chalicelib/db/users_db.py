@@ -1,49 +1,99 @@
 from uuid import uuid4
 import json
+from chalicelib.services.sns import Sns
 import boto3
+from botocore.exceptions import ClientError
+from chalice import BadRequestError, ChaliceViewError, NotFoundError
 
 class UsersDB:
   dynamodb = boto3.resource('dynamodb')
   users_table = dynamodb.Table('chunify-users')
+  response = {}
 
   # Lists all users
-  def show_all(self):
-    return self.users_table.scan()
+  def get_users(self):
+    try:
+      self.response = self.users_table.scan()
+    except ClientError as e:
+      raise BadRequestError("%s" % e)
+    else:
+      try:      
+        if int(self.response['ResponseMetadata']['HTTPStatusCode']) == 200:
+          if 'Items' in self.response:
+            users = []
+            for user in self.response['Items']:
+              users.append(
+                {
+                  'id': user['id'],
+                  'name' : user['name'],
+                  'age': user['age'],
+                  'phone': user['phone']
+                }
+              )
+            return users 
+        return []
+      except:
+        raise ChaliceViewError("%s" % self.response)
 
   # Lists single user
-  def show(self, id):
-    response = self.users_table.get_item(
-      Key={
-        'id': id
-      }
-    )
-    return response
+  def get_user(self, user_id):
+    if user_id == None:
+      raise ChaliceViewError("User id must be a valid value")
+
+    try:
+      self.response = self.users_table.get_item(
+        Key={
+          'id': user_id
+        }
+      )
+    except ClientError as e:
+      raise BadRequestError("%s" % e)
+    else:
+      try:
+        if int(self.response['ResponseMetadata']['HTTPStatusCode']) == 200:
+          if 'Item' in self.response:
+            return {
+              'id': self.response['Item']['id'],
+              'name' : self.response['Item']['name'],
+              'age': self.response['Item']['age'],
+              'phone': self.response['Item']['phone']
+            }
+        return {}
+      except:      
+        raise ChaliceViewError("%s" % self.response)
 
   # Inserts user
-  def insert(self, user):
-    uid = str(uuid4())    
+  def create_user(self, topic_arn, user):
+    uid = str(uuid4())
     user['id'] = uid
-
-    response = self.users_table.put_item(
-      Item=user
-    )
-
-    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
-      return {
-        'id': user['id'],
-        'name' : user['name'],
-        'age': user['age'],
-        'phone': user['phone']
-      }
+    try:
+      self.response = self.users_table.put_item(
+        Item=user
+      )
+      if 'phone' in user & user['phone'] != None:
+        Sns().subscribe(topic_arn, 'sms', user['phone'])
+    except ClientError as e:
+      raise BadRequestError("%s" % e)
     else:
-      return {}
+      try:
+        if int(self.response['ResponseMetadata']['HTTPStatusCode']) == 200:
+          return {
+            'id': user['id'],
+            'name' : user['name'],
+            'age': user['age'],
+            'phone': user['phone']
+          }
+        return {}
+      except:
+        raise ChaliceViewError("%s" % self.response)
+
 
   # Updates user
-  def update(self, user_data):
-    user = self.show(user_data['id'])
+  def update_user(self, user_id, user_data):
+    user = self.get_user(user_id)
+    if user == {}:
+      raise NotFoundError("Something is wrong with the user id %s" % user_id)   
     
-    if 'id' in user_data:
-      user['id'] = user_data['id']
     if 'name' in user_data:
       user['name'] = user_data['name']
     if 'age' in user_data:
@@ -51,29 +101,44 @@ class UsersDB:
     if 'phone' in user_data:
       user['phone'] = user_data['phone']
     
-    response = self.users_table.put_item(
-      Item=user
-    )
-    
-    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
-      return {
-        'id': user['id'],
-        'name' : user['name'],
-        'age': user['age'],
-        'phone': user['phone']
-      }
-    else: 
-      return {}      
+    try:
+      self.response = self.users_table.put_item(
+        Item=user
+      )
+    except ClientError as e:
+      raise BadRequestError("%s" % e)
+    else:
+      try:        
+        if int(self.response['ResponseMetadata']['HTTPStatusCode']) == 200:
+          return {
+            'id': user['id'],
+            'name' : user['name'],
+            'age': user['age'],
+            'phone': user['phone']
+          }
+        return {}
+      except:
+        raise ChaliceViewError("%s" % self.response)
+   
 
   # Deletes user
-  def delete(self, id):
-    response = self.users_table.delete_item(
-      Key={
-        'id': id,
-      }
-    )
+  def delete_user(self, user_id):   
+    user = self.get_user(user_id)
+    if user == {}:
+      raise NotFoundError("Something is wrong with the user id %s" % user_id)          
 
-    if int(response['ResponseMetadata']['HTTPStatusCode']) == 200:
-      return id
-    else: 
-      return None
+    try:
+      self.response = self.users_table.delete_item(
+        Key={
+          'id': user['id'],
+        }
+      )
+    except ClientError as e:
+      raise BadRequestError("%s" % e)
+    else:
+      try: 
+        if int(self.response['ResponseMetadata']['HTTPStatusCode']) == 200:
+          return { 'id': user['id'] }
+        return {}
+      except:
+        raise ChaliceViewError("%s" % self.response)
