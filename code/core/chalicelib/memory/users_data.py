@@ -38,7 +38,7 @@ class UsersData:
       raise ChaliceViewError("Something was wrong looking for the user: %s" % e)
 
   # Inserts user
-  def create_user(self, user):
+  def create_user(self, user, topic_arn=None):
     try:
       uid = str(uuid4())
       user['id'] = uid
@@ -55,7 +55,7 @@ class UsersData:
       raise ChaliceViewError("Something was wrong creating the user: %s" % e)
 
   # Updates user
-  def update_user(self, user_id, user_data):
+  def update_user(self, user_id, user_data, topic_arn=None):
     user = self.get_user(user_id)
     if user == {}:
       raise NotFoundError("Something is wrong with the user id %s" % user_id)  

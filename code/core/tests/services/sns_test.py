@@ -47,3 +47,7 @@ class SqsTest:
 # arn:aws:sns:us-east-1:112935367069:CHUNIFY_TOPIC:c9439885-d078-43d2-930f-7dbe8d5d69ab'
 # message_sent = SqsTest.send_message_user("+5586999945388", "Bem vindo ao Chunify")
 # message_sent = SqsTest.send_message_topic("arn:aws:sns:us-east-1:112935367069:CHUNIFY_TOPIC", "Bem vindo ao Chunify")
+
+# app.log.debug(sns.Sns().subscriptions())
+# sns.Sns().send_message_user_phone('+5586999945388', 'Hello from chunify!')
+# sns.Sns().send_message_topic(topic_arn, 'Hello from chunify!')

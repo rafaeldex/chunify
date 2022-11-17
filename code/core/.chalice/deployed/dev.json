@@ -1,10 +1,28 @@
 {
   "resources": [
     {
-      "name": "default-role",
+      "name": "handle_users_message_role",
       "resource_type": "iam_role",
-      "role_arn": "arn:aws:iam::112935367069:role/chunify-dev",
-      "role_name": "chunify-dev"
+      "role_arn": "arn:aws:iam::112935367069:role/chunify-dev-handle_users_message",
+      "role_name": "chunify-dev-handle_users_message"
+    },
+    {
+      "name": "handle_users_message",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:112935367069:function:chunify-dev-handle_users_message"
+    },
+    {
+      "name": "handle_users_message-dynamodb-event-source",
+      "resource_type": "dynamodb_event",
+      "stream_arn": "arn:aws:dynamodb:us-east-1:112935367069:table/chunify-users/stream/2022-11-16T05:34:50.130",
+      "event_uuid": "b98f7695-af04-4ed9-b298-ae0999e4cfa7",
+      "lambda_arn": "arn:aws:lambda:us-east-1:112935367069:function:chunify-dev-handle_users_message"
+    },
+    {
+      "name": "handle_musics_message_role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::112935367069:role/chunify-dev-handle_musics_message",
+      "role_name": "chunify-dev-handle_musics_message"
     },
     {
       "name": "handle_musics_message",
@@ -17,6 +35,12 @@
       "stream_arn": "arn:aws:dynamodb:us-east-1:112935367069:table/chunify-musics/stream/2022-11-16T05:34:50.530",
       "event_uuid": "f3512b4c-895d-4d48-9470-fb08ebe7b1fe",
       "lambda_arn": "arn:aws:lambda:us-east-1:112935367069:function:chunify-dev-handle_musics_message"
+    },
+    {
+      "name": "api_handler_role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::112935367069:role/chunify-dev-api_handler",
+      "role_name": "chunify-dev-api_handler"
     },
     {
       "name": "api_handler",

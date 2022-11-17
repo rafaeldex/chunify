@@ -1,6 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
-from chalice import BadRequestError, ChaliceViewError, NotFoundError
+from chalice import BadRequestError, ChaliceViewError
 
 class Streams:
   streams = boto3.client('dynamodbstreams')
@@ -20,10 +20,10 @@ class Streams:
       raise BadRequestError("%s" % e)
     else:
       try:
-        latest = ''
+        first = ''
         for stream in reversed(streams_table['Streams']):
-          latest = stream['StreamArn']
-        return latest    
+          first = stream['StreamArn']
+        return first    
       except Exception as e:
         raise ChaliceViewError("%s" % e)
 

@@ -63,18 +63,19 @@ class UsersDB:
         raise ChaliceViewError("%s" % self.response)
 
   # Inserts user
-  def create_user(self, topic_arn, user):
+  def create_user(self, user, topic_arn):
     uid = str(uuid4())
     user['id'] = uid
     try:
       self.response = self.users_table.put_item(
         Item=user
       )
-      if 'phone' in user & user['phone'] != None:
-        Sns().subscribe(topic_arn, 'sms', user['phone'])
     except ClientError as e:
       raise BadRequestError("%s" % e)
     else:
+      if (('phone' in user) and (user['phone'] != None)) :
+        if Sns().get_subscription_arn(user['phone']) == None:
+          Sns().subscribe(topic_arn, 'sms', user['phone'])
       try:
         if int(self.response['ResponseMetadata']['HTTPStatusCode']) == 200:
           return {
@@ -89,7 +90,7 @@ class UsersDB:
 
 
   # Updates user
-  def update_user(self, user_id, user_data):
+  def update_user(self, user_id, user_data, topic_arn):
     user = self.get_user(user_id)
     if user == {}:
       raise NotFoundError("Something is wrong with the user id %s" % user_id)   
@@ -99,6 +100,11 @@ class UsersDB:
     if 'age' in user_data:
       user['age'] = user_data['age']
     if 'phone' in user_data:
+      if user['phone'] != user_data['phone']:
+        if Sns().get_subscription_arn(user['phone']) == None:
+          Sns().unsubscribe(user['phone'])
+        if ((Sns().get_subscription_arn(user['phone']) == None) and (user_data['phone'] != None)):
+          Sns().subscribe(topic_arn, 'sms', user_data['phone'])
       user['phone'] = user_data['phone']
     
     try:
@@ -125,7 +131,11 @@ class UsersDB:
   def delete_user(self, user_id):   
     user = self.get_user(user_id)
     if user == {}:
-      raise NotFoundError("Something is wrong with the user id %s" % user_id)          
+      raise NotFoundError("Something is wrong with the user id %s" % user_id)
+
+    if (('phone' in user) and (user['phone'] != None)):
+      if Sns().get_subscription_arn(user['phone']) == None:
+        Sns().unsubscribe(user['phone'])         
 
     try:
       self.response = self.users_table.delete_item(
