@@ -18,7 +18,7 @@ if version == 'COMPLETE':
   music_stream_arn = streams.Streams().get_first_stream('chunify-musics')
   # Creates sns topic
   if sns.Sns().show_chunify_topic(topic_name) == "Not found":
-    sns.Sns().create_topic(topic_name)
+    topic_arn = sns.Sns().create_topic(topic_name)
   else:
     topic_arn = sns.Sns().show_chunify_topic(topic_name)  
 else:
@@ -54,7 +54,10 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def create_user():
   user_as_json = app.current_request.json_body
-  return get_database('users').create_user(topic_arn, user_as_json)
+  if version == 'COMPLETE':
+    return get_database('users').create_user(topic_arn, user_as_json)
+  else:
+    return get_database('users').create_user(user_as_json)
 
 @app.route('/users/{user_id}', methods=['GET'])
 def get_user(user_id): 

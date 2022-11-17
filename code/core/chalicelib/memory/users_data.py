@@ -1,48 +1,66 @@
 from uuid import uuid4
 import json
 import chalicelib.memory.data_initializer as DataInitializer
+from chalice import ChaliceViewError, NotFoundError
 
 class UsersData:
   # Lists all users
-  def show_all(self):
-    return DataInitializer.data[0]
+  def get_users(self):
+    try:
+      if len(DataInitializer.data[0]) > 0:
+        response = []
+        for user in DataInitializer.data[0]:
+          response.append({
+            'id': user['id'],
+            'name' : user['name'],
+            'age': user['age'],
+            'phone': user['phone']
+          })
+        return response 
+      return []
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong scanning users: %s" % e)
 
   # Lists single user
-  def show(self, id):
-    response = {}
-
-    users = DataInitializer.data[0]
-    for user in users:
-      if user['id'] == id:
-        response = {
-          'id': user['id'],
-          'name' : user['name'],
-          'age': user['age'],
-          'phone': user['phone']
-        }
- 
-    return response
+  def get_user(self, id):
+    try:
+      if len(DataInitializer.data[0]) > 0:
+        for user in DataInitializer.data[0]:
+          if user['id'] == id:
+            return {
+              'id': user['id'],
+              'name' : user['name'],
+              'age': user['age'],
+              'phone': user['phone']
+            }
+      return {}
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong looking for the user: %s" % e)
 
   # Inserts user
-  def insert(self, user):
-    uid = str(uuid4())
-    user['id'] = uid
+  def create_user(self, user):
+    try:
+      uid = str(uuid4())
+      user['id'] = uid
 
-    DataInitializer.data[0].append(user)
+      DataInitializer.data[0].append(user)
 
-    return {
-      'id': user['id'],
-      'name' : user['name'],
-      'age': user['age'],
-      'phone': user['phone']
-    }
+      return {
+        'id': user['id'],
+        'name' : user['name'],
+        'age': user['age'],
+        'phone': user['phone']
+      }
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong creating the user: %s" % e)
 
   # Updates user
-  def update(self, user_data):
-    response = {}
-    user = self.show(user_data['id'])
-    
-    if not user == {}:
+  def update_user(self, user_id, user_data):
+    user = self.get_user(user_id)
+    if user == {}:
+      raise NotFoundError("Something is wrong with the user id %s" % user_id)  
+
+    try:
       index = DataInitializer.data[0].index(user)
 
       if 'name' in user_data:
@@ -54,22 +72,23 @@ class UsersData:
       
       DataInitializer.data[0][index] = user
       
-      response = {
+      return {
         'id': user['id'],
         'name' : user['name'],
         'age': user['age'],
         'phone': user['phone']
-      }
-
-    return response       
+      }    
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong updating the user: %s" % e)    
 
   # Deletes user
-  def delete(self, id):
-    response = { 'id' : ''}
-    user = self.show(id)
+  def delete_user(self, user_id):
+    user = self.get_user(user_id)
+    if user == {}:
+      raise NotFoundError("Something is wrong with the user id %s" % user_id)  
 
-    if not user == {}:
+    try:
       DataInitializer.data[0].remove(user)
-      response = { 'id': id }
-
-    return response   
+      return { 'id': user['id'] }
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong deleting the user: %s" % e)

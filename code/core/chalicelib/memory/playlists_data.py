@@ -1,86 +1,102 @@
 from uuid import uuid4
 import json
 import chalicelib.memory.data_initializer as DataInitializer
+from chalicelib.memory.users_data import UsersData
+from chalice import ChaliceViewError, NotFoundError
 
 class PlaylistsData:
+  # Returns user
+  def get_user(self, user_id):
+    user = UsersData().get_user(user_id)
+    if user == {}:
+      raise NotFoundError("Something is wrong with the user id %s" % user_id)
+    return user
+
   # Lists all playlists
-  def show_all(self):
-    return DataInitializer.data[1]
+  def get_playlists(self, user_id):
+    user = self.get_user(user_id)
+    try:
+      if len(DataInitializer.data[1]) > 0:
+        response = []
+        for playlist in DataInitializer.data[1]:
+          if playlist['user_id'] == user['id']:
+            response.append({
+              'id': playlist['id'],
+              'name' : playlist['name'],
+              'user_id': playlist['user_id']
+            })
+        return response 
+      return []
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong scanning playlists: %s" % e)
 
   # Lists single playlist
-  def show(self, id):
-    response = {}
-
-    playlists = DataInitializer.data[1]
-    for playlist in playlists:
-      if playlist['id'] == id:
-        response = {
-          'id': playlist['id'],
-          'name' : playlist['name'],
-          'user_id': playlist['user_id']
-        }
- 
-    return response
-
-  # Lists all playlists that belongs to an user
-  def show_from_user(self, user_id):
-    response = []
-
-    playlists = DataInitializer.data[1]
-    for playlist in playlists:
-      if playlist['user_id'] == user_id:
-        response.append({
-          'id': playlist['id'],
-          'name' : playlist['name'],
-          'user_id': playlist['user_id']
-        })
- 
-    return response
+  def get_playlist(self, user_id, playlist_id):
+    user = self.get_user(user_id)
+    playlists = self.get_playlists(user['id'])
+    try:
+      if len(playlists) > 0:
+        for playlist in playlists:
+          if playlist['id'] == playlist_id:
+            return {
+              'id': playlist['id'],
+              'name' : playlist['name'],
+              'user_id': playlist['user_id']
+            }
+      return {}
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong looking for the playlist: %s" % e)  
 
   # Inserts playlist
-  def insert(self, playlist):
-    uid = str(uuid4())
-    playlist['id'] = uid
+  def create_playlist(self, user_id, playlist):
+    user = self.get_user(user_id)
+    try:
+      uid = str(uuid4())
+      playlist['id'] = uid
+      playlist['user_id'] = user['id']
 
-    DataInitializer.data[1].append(playlist)
+      DataInitializer.data[1].append(playlist)
 
-    return {
-      'id': playlist['id'],
-      'name' : playlist['name'],
-      'user_id': playlist['user_id']
-    }
-
-  # Updates playlist
-  def update(self, playlist_data):
-    response = {}
-    playlist = self.show(playlist_data['id'])
-    
-    if not playlist == {}:
-      index = DataInitializer.data[1].index(playlist)
-    
-      if "name" in playlist_data:
-        playlist["name"] = playlist_data["name"]
-      if "user_id" in playlist_data:
-        playlist["user_id"] = playlist_data["user_id"]
-      
-      DataInitializer.data[1][index] = playlist
-      
-      response = {
+      return {
         'id': playlist['id'],
         'name' : playlist['name'],
         'user_id': playlist['user_id']
       }
-
-    return response 
-   
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong creating the playlist: %s" % e)  
+  
+  # Updates playlist
+  def update_playlist(self, user_id, playlist_id, playlist_data):
+    user = self.get_user(user_id)
+    playlist = self.get_playlist(user['id'], playlist_id)
+    if playlist == {}:
+      raise NotFoundError("Something is wrong with the playlist id %s" % playlist_id) 
+    
+    try:
+      index = DataInitializer.data[1].index(playlist)
+    
+      if "name" in playlist_data:
+        playlist["name"] = playlist_data["name"]
+      
+      DataInitializer.data[1][index] = playlist
+      
+      return {
+        'id': playlist['id'],
+        'name' : playlist['name'],
+        'user_id': playlist['user_id']
+      }
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong updating the playlist: %s" % e)          
 
   # Deletes playlist
-  def delete(self, id):
-    response = { 'id' : ''}
-    playlist = self.show(id)
+  def delete_playlist(self, user_id, playlist_id):
+    user = self.get_user(user_id)
+    playlist = self.get_playlist(user['id'], playlist_id)
+    if playlist == {}:
+      raise NotFoundError("Something is wrong with the playlist id %s" % playlist_id) 
 
-    if not playlist == {}:
+    try:
       DataInitializer.data[1].remove(playlist)
-      response = { 'id': id }
-
-    return response
+      return { 'id': playlist['id'] }
+    except Exception as e:
+      raise ChaliceViewError("Something was wrong deleting the playlist: %s" % e)    

@@ -8,7 +8,7 @@ from chalice import BadRequestError, ChaliceViewError, NotFoundError
 class UsersDB:
   dynamodb = boto3.resource('dynamodb')
   users_table = dynamodb.Table('chunify-users')
-  response = {}
+  response = None
 
   # Lists all users
   def get_users(self):
